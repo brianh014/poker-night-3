@@ -30,6 +30,7 @@ export default defineComponent({
     if (this.$route) {
       this.authService.SaveAuthToken(this.$route.hash);
       history.replaceState(null, '', '/account');
+      this.$emit('userLoggedIn');
     }
 
     if (!this.authService.IsLoggedIn()) {

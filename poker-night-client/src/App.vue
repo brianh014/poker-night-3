@@ -31,7 +31,7 @@
   </header>
   <div class="container">
       <main role="main" class="pb-3">
-          <router-view/>
+          <router-view @userLoggedIn="userLoggedIn" />
       </main>
   </div>
 </template>
@@ -63,6 +63,9 @@ export default defineComponent({
     logOut () {
       this.authService.LogOut();
       window.open(process.env.VUE_APP_AUTH_LOGOUT, '_self');
+    },
+    userLoggedIn () {
+      this.$forceUpdate();
     }
   }
 });

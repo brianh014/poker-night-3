@@ -53,13 +53,13 @@
           <form v-if="!createLoading">
             <div class="mb-3 text-center">
               <h3 class="mb-3">When's the game?</h3>
-              <v-date-picker v-model="newGame.date" mode="dateTime" color="green" is-dark is-expanded />
+              <v-date-picker v-model="newGameDate" mode="dateTime" color="green" is-dark is-expanded />
             </div>
             <div class="mb-3 text-center">
               <h3>What's the buy in?</h3>
               <div class="input-group w-50 m-auto">
                 <span class="input-group-text">$</span>
-                <currency-input v-model="newGame.buyIn" />
+                <currency-input v-model="newGameBuyIn" />
               </div>
             </div>
           </form>
@@ -85,6 +85,7 @@ import GameService from '@/services/GameService';
 import Game from '@/models/game.model';
 import router from '@/router';
 import CurrencyInput from '@/components/CurrencyInput.vue';
+declare const bootstrap: any;
 
 export default defineComponent({
   name: 'Games',
@@ -100,31 +101,40 @@ export default defineComponent({
         style: 'currency',
         currency: 'USD'
       }),
-      newGame: new Game(undefined)
+      newGame: new Game({}),
+      newGameBuyIn: 10,
+      newGameDate: new Date(),
+      createGameModal: {} as any
     }
   },
   mounted () {
     this.gameService.GetGames()
       .then((result) => { this.games = result })
       .finally(() => { this.loading = false });
+
+    this.createGameModal = new bootstrap.Modal(document.getElementById('addGameModal'))
   },
   methods: {
     openGame (gameId: string) {
       router.push({ name: 'Game', params: { id: gameId } });
     },
     setNewGame () {
-      const gameDate = new Date();
-      gameDate.setHours(19);
-      gameDate.setMinutes(0);
-      gameDate.setSeconds(0);
-      this.newGame.date = gameDate.toString();
-      this.newGame.buyIn = 10;
+      this.newGameDate = new Date();
+      this.newGameDate.setHours(19);
+      this.newGameDate.setMinutes(0);
+      this.newGameDate.setSeconds(0);
     },
     createGame () {
       this.createLoading = true;
+      this.newGame.buyIn = this.newGameBuyIn;
+      this.newGame.date = this.newGameDate.toISOString();
       this.gameService.CreateGame(this.newGame)
         .then((result: Game) => {
-          if (result?.id) router.push({ name: 'Game', params: { id: result.id } });
+          this.createGameModal.hide();
+
+          this.$nextTick(() => {
+            if (result?.id) router.push({ name: 'Game', params: { id: result.id } })
+          });
         })
         .finally(() => { this.createLoading = false });
     }
