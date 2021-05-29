@@ -1,0 +1,10 @@
+{
+  "requestContext": {
+    "http": {
+      "method": "GET"
+    }
+  },
+  "pathParameters": {
+    "playerId": "19b5d6c6-b8ed-4bda-873d-7ee9c2dbb995"
+  }
+}
