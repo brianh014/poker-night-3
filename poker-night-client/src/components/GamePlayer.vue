@@ -219,7 +219,7 @@ export default defineComponent({
   },
   computed: {
     isCurrentPlayer (): boolean {
-      return this.player?.loginId === this.authService.CurrentLoginId();
+      return this.authService.IsLoggedIn() && this.player?.loginId === this.authService.CurrentLoginId();
     }
   },
   methods: {
