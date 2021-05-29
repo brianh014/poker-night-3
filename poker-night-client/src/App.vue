@@ -18,7 +18,7 @@
                 </ul>
                 <ul class="navbar-nav d-flex">
                   <li class="nav-item active">
-                      <router-link v-if="loggedIn()" to="/account" class="nav-link">My Account</router-link>
+                      <router-link v-if="loggedIn()" to="/account" class="nav-link" v-on:click="closeNav()">My Account</router-link>
                       <a v-else class="nav-link" v-bind:href="authUrl">Log In</a>
                   </li>
                   <li class="nav-item active" v-if="loggedIn()">
