@@ -7,6 +7,7 @@
   <div v-if="player && !loading">
     <h1>Howdy, {{ player?.name }}<br /></h1>
     <p class="text-muted">Your last log in was {{ player?.LastLoginFormatted() }}</p>
+    <current-game />
   </div>
 </template>
 
@@ -15,9 +16,13 @@ import { defineComponent } from 'vue';
 import AuthService from '@/services/AuthService';
 import PlayerService from '@/services/PlayerService';
 import Player from '@/models/player.model';
+import CurrentGame from '@/components/CurrentGame.vue';
 
 export default defineComponent({
   name: 'Account',
+  components: {
+    CurrentGame
+  },
   data () {
     return {
       authService: new AuthService(),

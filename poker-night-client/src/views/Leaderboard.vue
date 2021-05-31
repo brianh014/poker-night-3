@@ -32,7 +32,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import PlayerService from '@/services/PlayerService'
 import { defineComponent } from 'vue'
 
@@ -41,7 +41,7 @@ export default defineComponent({
   data () {
     return {
       playerService: new PlayerService(),
-      stats: {},
+      stats: {} as any,
       loading: false,
       formatter: new Intl.NumberFormat('en-US', {
         style: 'currency',
@@ -54,7 +54,7 @@ export default defineComponent({
     this.playerService.GetPlayerStats()
       .then((results) => {
         this.stats = results;
-        this.stats.sort((firstEl, secondEl) => { return secondEl.totalProfit - firstEl.totalProfit });
+        this.stats.sort((firstEl: any, secondEl: any) => { return secondEl.totalProfit - firstEl.totalProfit });
       })
       .finally(() => { this.loading = false });
   }

@@ -21,6 +21,12 @@ export default class GameService {
     });
   }
 
+  GetCurrentGame (): Promise<Game> {
+    return axios.get(`${process.env.VUE_APP_API}/games?current=true`).then((result: any) => {
+      return new Game(result?.data);
+    });
+  }
+
   CreateGame (game: Game): Promise<Game> {
     return axios.post(`${process.env.VUE_APP_API}/games`, game).then((result: any) => {
       return new Game(result?.data);

@@ -22,7 +22,11 @@ namespace Games.Services
 
         public override async Task<IResponse> ExecuteGet()
         {
-            if (Request.PathParameters == null)
+            if (Request.PathParameters == null && !string.IsNullOrEmpty(Request.QueryParameters?.Current))
+            {
+                return new BaseResponse(await _dao.GetCurrentGame());
+            }
+            else if (Request.PathParameters == null)
             {
                 return new BaseResponse(await _dao.GetGames());
             }
@@ -30,7 +34,7 @@ namespace Games.Services
             {
                 return new BaseResponse(await _dao.GetGame(Request.PathParameters.GameId));
             }
-
+            
             return new ErrorResponse("Bad request", (int)HttpStatusCode.BadRequest);
         }
 

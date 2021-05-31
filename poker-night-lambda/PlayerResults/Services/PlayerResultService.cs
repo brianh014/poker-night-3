@@ -24,7 +24,7 @@ namespace Games.Services
             {
                 if (!string.IsNullOrWhiteSpace(Request.PathParameters?.GameId))
                 {
-                    if (!Request.IsAdmin) return Forbidden();
+                    if (Request.CurrentUser != Request.ParsedBody.PlayerId && !Request.IsAdmin) return Forbidden();
                     return new BaseResponse(await _dao.AddPlayer(Request.PathParameters.GameId, Request.ParsedBody));
                 }
             }

@@ -27,6 +27,19 @@ namespace Common.Data
             }
         }
 
+        public async Task<Game> GetCurrentGame()
+        {
+            using (var context = new DynamoDBContext(_client))
+            {
+                return (await context.ScanAsync<Game>(new List<ScanCondition>()
+                {
+                    new ScanCondition("Date", Amazon.DynamoDBv2.DocumentModel.ScanOperator.Between, new object[] { DateTime.UtcNow.AddHours(-6), DateTime.UtcNow.AddHours(6) }),
+                    new ScanCondition("Closed", Amazon.DynamoDBv2.DocumentModel.ScanOperator.NotEqual, true)
+                })
+                .GetRemainingAsync()).FirstOrDefault();
+            }
+        }
+
         public async Task<Game> GetGame(string id)
         {
             using (var context = new DynamoDBContext(_client))
