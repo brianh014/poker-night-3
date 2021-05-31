@@ -1,11 +1,15 @@
 <template>
   <div class="alert alert-primary text-center" role="alert" v-if="authService.IsLoggedIn() && this.eligible" v-on:click="join()">
-    <span v-if="!loading" class="fw-bold">A game is currently in progress!<br />Click to join!</span>
+    <span v-if="!loading" class="fw-bold">A game is currently in progress!<br />Click to join</span>
     <div class="d-flex justify-content-center" v-else>
       <div class="spinner-border" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
     </div>
+  </div>
+
+  <div class="alert alert-primary text-center" role="alert" v-if="authService.IsLoggedIn() && this.inGame" v-on:click="nav()">
+    <span class="fw-bold">You are in a current game!<br />Click to go to the game</span>
   </div>
 </template>
 
@@ -29,6 +33,7 @@ export default defineComponent({
       currentGame: {} as Game,
       currentPlayer: {} as Player,
       eligible: false,
+      inGame: false,
       loading: false
     }
   },
@@ -40,6 +45,7 @@ export default defineComponent({
         this.gameService.GetCurrentGame().then((result) => {
           this.currentGame = result;
           this.eligible = result.id !== '' && result.players?.filter(p => p.playerId === this.currentPlayer.id).length === 0;
+          this.inGame = result.id !== '' && result.players?.filter(p => p.playerId === this.currentPlayer.id).length === 1;
         });
       }
     }
@@ -56,6 +62,9 @@ export default defineComponent({
           })
           .finally(() => { this.loading = false });
       }
+    },
+    nav () {
+      router.push({ name: 'Game', params: { id: this.currentGame.id } });
     }
   }
 })
