@@ -20,7 +20,12 @@ namespace Players.Services
 
         public override async Task<IResponse> ExecuteGet()
         {
-            if (Request.PathParameters == null)
+            if (Request.PathParameters == null && !string.IsNullOrEmpty(Request.QueryParameters.Stats))
+            {
+                var stats = await _dao.GetPlayerStats();
+                return new BaseResponse(stats);
+            }
+            else if (Request.PathParameters == null)
             {
                 var players = await _dao.GetPlayers();
                 return new BaseResponse(players);

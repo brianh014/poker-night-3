@@ -23,4 +23,16 @@ namespace Common.Models
         [JsonPropertyName("lastLogIn")]
         public DateTime? LastLogIn { get; set; }
     }
+
+    public class PlayerStats : Player
+    {
+        [JsonPropertyName("gamesPlayed")]
+        public int GamesPlayed { get; set; }
+        [JsonPropertyName("totalBuyIn")]
+        public decimal TotalBuyIn { get; set; }
+        [JsonPropertyName("totalCashOut")]
+        public decimal TotalCashOut { get; set; }
+        [JsonPropertyName("totalProfit")]
+        public decimal TotalProfit { get; set; }
+    }
 }

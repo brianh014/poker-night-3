@@ -25,5 +25,7 @@ namespace Players.Contracts
     {
         [JsonPropertyName("byLoginId")]
         public string ByLoginId { get; set; }
+        [JsonPropertyName("stats")]
+        public string Stats { get; set; }
     }
 }

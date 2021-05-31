@@ -19,4 +19,10 @@ export default class PlayerService {
       return players;
     });
   }
+
+  GetPlayerStats (): Promise<any> {
+    return axios.get(`${process.env.VUE_APP_API}/players?stats=true`).then((result: any) => {
+      return result?.data;
+    });
+  }
 }

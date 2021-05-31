@@ -15,6 +15,9 @@
                     <li class="nav-item active">
                         <router-link class="nav-link" to="/games" v-on:click="closeNav()">Games</router-link>
                     </li>
+                    <li class="nav-item active">
+                        <router-link class="nav-link" to="/leaderboard" v-on:click="closeNav()">Leaderboard</router-link>
+                    </li>
                 </ul>
                 <ul class="navbar-nav d-flex">
                   <li class="nav-item active">

@@ -22,6 +22,11 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Game',
     component: () => import('../views/Game.vue'),
     props: true
+  },
+  {
+    path: '/leaderboard',
+    name: 'Leaderboard',
+    component: () => import('../views/Leaderboard.vue')
   }
 ]
 

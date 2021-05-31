@@ -25,6 +25,26 @@ namespace Common.Data
             }
         }
 
+        public async Task<List<PlayerStats>> GetPlayerStats()
+        {
+            var gamesDao = new GamesDao();
+            var games = await gamesDao.GetGames();
+
+            var results = from p in games.Where(g => g.Closed).SelectMany(g => g.Players)
+                group p by p.PlayerId into g
+                select new PlayerStats
+                {
+                    Id = g.FirstOrDefault()?.PlayerId,
+                    Name = g.FirstOrDefault()?.Name,
+                    GamesPlayed = g.Count(),
+                    TotalBuyIn = g.Sum(x => x.BuyIn ?? 0),
+                    TotalCashOut = g.Sum(x => x.CashOut ?? 0),
+                    TotalProfit = g.Sum(x => (x.CashOut ?? 0) - (x.BuyIn ?? 0))
+                };
+
+            return results.ToList();
+        }
+
         public async Task<Player> GetPlayer(string id)
         {
             using (var context = new DynamoDBContext(_client))
