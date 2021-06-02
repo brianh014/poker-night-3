@@ -40,11 +40,11 @@ export default defineComponent({
 
     if (!this.authService.IsLoggedIn()) {
       window.open(process.env.VUE_APP_AUTH, '_self');
+    } else {
+      this.playerService.GetPlayerByLoginId(this.authService.CurrentLoginId() || '')
+        .then((result) => { this.player = new Player(result) })
+        .finally(() => { this.loading = false });
     }
-
-    this.playerService.GetPlayerByLoginId(this.authService.CurrentLoginId() || '')
-      .then((result) => { this.player = new Player(result) })
-      .finally(() => { this.loading = false });
   }
 })
 </script>
