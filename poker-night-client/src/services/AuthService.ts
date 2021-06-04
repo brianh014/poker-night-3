@@ -15,7 +15,11 @@ export default class AuthService {
     }
 
     const expiryMatch = params.match(/expires_in=([^&]*)/);
-    if (expiryMatch) localStorage.setItem('jwt_expiry', expiryMatch[1]);
+    if (expiryMatch) {
+      const now = new Date();
+      const expireDate = new Date(now.getTime() + (+expiryMatch[1]) * 1000);
+      localStorage.setItem('jwt_expiry', expireDate.toISOString());
+    } 
   }
 
   LogOut () {
@@ -41,5 +45,13 @@ export default class AuthService {
 
   AuthHeader (): string {
     return localStorage.getItem('auth_header') ?? '';
+  }
+
+  IsExpired (): boolean {
+    var expireTime = localStorage.getItem('jwt_expiry');
+    if (expireTime != null && expireTime != '') {
+      return new Date(expireTime) < new Date();
+    }
+    return false
   }
 }

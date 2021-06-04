@@ -53,6 +53,12 @@ export default defineComponent({
       logoutUrl: process.env.VUE_APP_AUTH_LOGOUT
     }
   },
+  mounted () {
+    if (this.authService.IsExpired()) {
+      this.authService.LogOut();
+      window.open(this.authUrl, '_self');
+    }
+  },
   methods: {
     closeNav () {
       var menu = document.getElementById('navbarSupportedContent');
@@ -65,7 +71,7 @@ export default defineComponent({
     },
     logOut () {
       this.authService.LogOut();
-      window.open(process.env.VUE_APP_AUTH_LOGOUT, '_self');
+      window.open(this.logoutUrl, '_self');
     },
     userLoggedIn () {
       this.$forceUpdate();
