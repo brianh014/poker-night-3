@@ -19,7 +19,7 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   undefined,
   error => {
-    if (error.response.status === 401) {
+    if (error.response.status === 401 || error.response.status === 403) {
       window.open(process.env.VUE_APP_AUTH, '_self');
     }
     else {

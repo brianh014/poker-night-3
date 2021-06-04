@@ -46,7 +46,7 @@
     <div class="modal-dialog modal-fullscreen-md-down">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Buy More</h5>
+          <h5 class="modal-title">Buy More - Count Your Chips</h5>
         </div>
         <div class="modal-body">
           <div class="d-flex justify-content-center mt-4" v-if="updating">
@@ -55,7 +55,8 @@
             </div>
           </div>
           <div v-else>
-            <h3>How much do you currently have?</h3>
+            <chip-counter @new-total="currentBuyAmount = $event" />
+            <h5 class="text-center mt-4">Or enter total cash value instead</h5>
             <div class="input-group w-50 m-auto mt-3">
               <span class="input-group-text">$</span>
               <currency-input v-model="currentBuyAmount" />
@@ -74,7 +75,7 @@
     <div class="modal-dialog modal-fullscreen-md-down">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Cash Out</h5>
+          <h5 class="modal-title">Cash Out - Count Your Chips</h5>
         </div>
         <div class="modal-body">
           <div class="d-flex justify-content-center mt-4" v-if="updating">
@@ -83,7 +84,8 @@
             </div>
           </div>
           <div v-else>
-            <h3>How much do you currently have?</h3>
+            <chip-counter @new-total="currentCashAmount = $event" />
+            <h5 class="text-center mt-4">Or enter total cash value instead</h5>
             <div class="input-group w-50 m-auto mt-3">
               <span class="input-group-text">$</span>
               <currency-input v-model="currentCashAmount" />
@@ -175,12 +177,13 @@ import PlayerResult from '@/models/playerResult.model';
 import AuthService from '@/services/AuthService';
 import GameService from '@/services/GameService';
 import CurrencyInput from '@/components/CurrencyInput.vue';
+import ChipCounter from '@/components/ChipCounter.vue';
 declare const bootstrap: any;
 
 export default defineComponent({
   name: 'GamePlayer',
   emits: ['refreshGame'],
-  components: { CurrencyInput },
+  components: { CurrencyInput, ChipCounter },
   props: {
     playerResult: PlayerResult,
     game: Game
