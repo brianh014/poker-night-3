@@ -37,7 +37,8 @@
     <div class="modal-dialog modal-fullscreen-md-down">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Add Players</h5>
+          <h5 v-if="!showCreatePlayer" class="modal-title">Add Players</h5>
+          <h5 v-else class="modal-title">Create New Player</h5>
         </div>
         <div class="modal-body">
           <div class="d-flex justify-content-center mt-4" v-if="playerLoading">
@@ -46,26 +47,47 @@
             </div>
           </div>
           <div v-else>
-            <ul class="list-group">
-              <li class="list-group-item" :class="{ active: inGame(player.id) }" v-for="player in availablePlayers" v-bind:key="player" v-on:click="addToGame(player)">
-                <div class="d-flex justify-content-between">
-                  <div>
-                    {{ player.name }}
-                  </div>
-                  <div>
-                    <div class="spinner-border spinner-border-sm" role="status" v-if="addLoading(player.id)">
-                      <span class="visually-hidden">Loading...</span>
+            <div v-if="!showCreatePlayer">
+              <ul class="list-group">
+                <li class="list-group-item" :class="{ active: inGame(player.id) }" v-for="player in availablePlayers" v-bind:key="player" v-on:click="addToGame(player)">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      {{ player.name }}
                     </div>
-                    <i class="bi bi-check" v-else-if="inGame(player.id)"></i>
-                    <i class="bi bi-plus" v-else></i>
+                    <div>
+                      <div class="spinner-border spinner-border-sm" role="status" v-if="addLoading(player.id)">
+                        <span class="visually-hidden">Loading...</span>
+                      </div>
+                      <i class="bi bi-check" v-else-if="inGame(player.id)"></i>
+                      <i class="bi bi-plus" v-else></i>
+                    </div>
                   </div>
+                </li>
+              </ul>
+
+              <div class="mt-5">
+                <button type="button" class="btn btn-primary w-100" v-on:click="showCreatePlayer = true">Create No Login Player</button>
+              </div>
+            </div>
+            <div v-else>
+              <form v-if="!creatingPlayer" @submit="createPlayer">
+                <div class="mb-3">
+                  <label for="newPlayerName" class="form-label">Player Name</label>
+                  <input v-model="newPlayerName" type="text" class="form-control" id="newPlayerName" required>
                 </div>
-              </li>
-            </ul>
+                <button type="submit" class="btn btn-primary">Create</button>
+              </form>
+              <div class="d-flex justify-content-center mt-4" v-else>
+                <div class="spinner-border" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" v-on:click="getGame()">Done</button>
+          <button v-if="!showCreatePlayer" type="button" class="btn btn-secondary" data-bs-dismiss="modal" v-on:click="getGame()">Done</button>
+          <button v-else type="button" class="btn btn-secondary" v-on:click="showCreatePlayer = false">Cancel</button>
         </div>
       </div>
     </div>
@@ -95,6 +117,8 @@ export default defineComponent({
       playerService: new PlayerService(),
       loading: true,
       playerLoading: false,
+      showCreatePlayer: false,
+      creatingPlayer: false,
       formatter: new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD'
@@ -102,7 +126,8 @@ export default defineComponent({
       game: {} as Game,
       availablePlayers: [] as Player[],
       inGamePlayers: [] as string[],
-      loadingPlayers: [] as string[]
+      loadingPlayers: [] as string[],
+      newPlayerName: ''
     }
   },
   mounted () {
@@ -111,6 +136,7 @@ export default defineComponent({
   methods: {
     getAvailablePlayers () {
       this.playerLoading = true;
+      this.showCreatePlayer = false;
       this.playerService.GetPlayers()
         .then((result: Player[]) => {
           this.availablePlayers = result;
@@ -161,6 +187,27 @@ export default defineComponent({
       if (currentPlayerIndex == null) return;
       const player = this.game.players.splice(currentPlayerIndex, 1);
       this.game.players.unshift(player[0]);
+    },
+    createPlayer: function (e: any) {
+      if (this.newPlayerName == null || this.newPlayerName === '' || this.newPlayerName === ' ') return;
+
+      this.creatingPlayer = true;
+      const newPlayer = new Player({
+        name: this.newPlayerName,
+        lastLogIn: undefined
+      });
+      this.playerService.CreatePlayer(newPlayer)
+        .then((player: Player) => {
+          this.availablePlayers.push(player);
+          this.availablePlayers.sort((a, b) => ((a.name || '') > (b.name || '')) ? 1 : -1);
+        })
+        .finally(() => {
+          this.creatingPlayer = false;
+          this.newPlayerName = '';
+          this.showCreatePlayer = false;
+        });
+
+      e.preventDefault();
     }
   }
 })

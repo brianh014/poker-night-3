@@ -79,6 +79,9 @@ namespace Common.Data
         public async Task<Player> CreatePlayer(Player player)
         {
             player.Id = Guid.NewGuid().ToString();
+            player.LastLogIn = null;
+            player.LoginId = null;
+            if (string.IsNullOrWhiteSpace(player.Email)) player.Email = null;
 
             using (var context = new DynamoDBContext(_client))
             {

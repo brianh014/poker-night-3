@@ -25,4 +25,10 @@ export default class PlayerService {
       return result?.data;
     });
   }
+
+  CreatePlayer (newPlayer: Player): Promise<Player> {
+    return axios.post(`${process.env.VUE_APP_API}/players`, newPlayer).then((result: any) => {
+      return result?.data;
+    });
+  }
 }

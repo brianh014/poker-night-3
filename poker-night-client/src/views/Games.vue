@@ -29,14 +29,17 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-6 col-md-4 fs-5">
+          <div class="col-6 col-md-3 fs-5">
             <p>{{ game?.PlayersCashedOut() }} / {{ game?.players.length }} Cashed Out</p>
           </div>
-          <div class="col-6 col-md-4 fs-5">
+          <div class="col-6 col-md-3 fs-5">
             <p>{{ formatter.format(game?.CashedOut()) || "0.00" }} Cashed Out</p>
           </div>
-          <div class="col-6 col-md-4 fs-5">
+          <div class="col-6 col-md-3 fs-5">
             <p>{{ formatter.format(game?.BoughtIn()) || "0.00" }} Bought In</p>
+          </div>
+          <div class="col-6 col-md-3 fs-5">
+            <p>{{ formatter.format(game?.buyIn) }} Buy Ins</p>
           </div>
         </div>
       </div>
