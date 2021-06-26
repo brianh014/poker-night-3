@@ -11,11 +11,13 @@ namespace Games.Services
     {
         private Request Request { get; set; }
         private GamesDao _dao { get; set; }
+        private PlayersDao _playerDao { get; set; }
 
         public PlayerResultService(Request request)
         {
             Request = request;
             _dao = new GamesDao();
+            _playerDao = new PlayersDao();
         }
 
         public override async Task<IResponse> ExecutePost()
@@ -24,7 +26,7 @@ namespace Games.Services
             {
                 if (!string.IsNullOrWhiteSpace(Request.PathParameters?.GameId))
                 {
-                    if (Request.CurrentUser != Request.ParsedBody.PlayerId && !Request.IsAdmin) return Forbidden();
+                    if (!Request.IsAdmin && !await IsSamePlayer(Request.CurrentUser, Request.ParsedBody.PlayerId)) return Forbidden();
                     return new BaseResponse(await _dao.AddPlayer(Request.PathParameters.GameId, Request.ParsedBody));
                 }
             }
@@ -38,7 +40,7 @@ namespace Games.Services
             {
                 if (!string.IsNullOrWhiteSpace(Request.PathParameters?.GameId) && !string.IsNullOrWhiteSpace(Request.PathParameters?.PlayerId))
                 {
-                    if (!Request.IsAdmin && Request.ParsedBody.PlayerId != Request.CurrentUser) return Forbidden();
+                    if (!Request.IsAdmin && !await IsSamePlayer(Request.CurrentUser, Request.ParsedBody.PlayerId)) return Forbidden();
                     return new BaseResponse(await _dao.UpdatePlayerResult(Request.PathParameters.GameId, Request.ParsedBody));
                 }
             }
@@ -56,6 +58,12 @@ namespace Games.Services
             }
 
             return new ErrorResponse("Bad request", (int)HttpStatusCode.BadRequest);
+        }
+
+        private async Task<bool> IsSamePlayer(string loginId, string playerId)
+        {
+            var player = await _playerDao.GetPlayerByLogin(loginId, null);
+            return player != null && playerId == player.Id;
         }
     }
 }
